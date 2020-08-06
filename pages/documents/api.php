@@ -156,6 +156,8 @@
 
     function editFolder($data) {
         $oFolder = new Folder();
+        $oDocument = new Document();
+
         $folder = $oFolder->getOne($data['folderId']);
         $renamed = renameFolder($folder['folderPath'], $data['folderName']);
         if($renamed) {
@@ -164,6 +166,16 @@
                 'folderPath'=>$renamed,
                 'updatedAt'=>date('Y-m-d H:i:s')
             );
+            $docs = $oDocument->getAll("AND D.folderId=".$folder['folderId']);
+            foreach($docs as $doc) {
+                $lastIndex = strrpos($doc['docFilePath'], '/');
+                $realFile = substr($doc['docFilePath'], $lastIndex + 1, strlen($doc['docFilePath']) - 1);
+                $targetPath = DIR_ROOT.DOCUMENTS_ROOT.$renamed.$realFile;
+                $updateArray = array(
+                    'docFilePath'=>$targetPath
+                );
+                $oDocument->update($updateArray, $doc['documentID']);
+            }
             $res = $oFolder->update($updateFolder, $folder['folderId']);
             if($res) {
                 echo $folder['folderId'];
@@ -312,6 +324,7 @@
             $lastIndex = strrpos($doc['docFilePath'], '/');
             $pre = substr($doc['docFilePath'], 0, $lastIndex);
             $targetPath = $pre.'/'.$uploadName;
+            print_r($targetPath);
             $res = move_uploaded_file($_FILES['file']['tmp_name'], $targetPath);
             if($res) {
                 $fileSize = FileSizeConvert(filesize($targetPath));

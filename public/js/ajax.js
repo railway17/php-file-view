@@ -165,7 +165,7 @@ $("#btn_update_doc").unbind().bind('click', function(e) {
         success: function(php_script_response){
             if(php_script_response) {
                 showToastSuccess('File updated successfully') 
-                location.href = `${BASE_URL}folders`
+                // location.href = `${BASE_URL}folders`
             }
         }
     });
