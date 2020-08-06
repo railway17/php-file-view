@@ -43,6 +43,23 @@
 			}
 		}
 
+		function getByPrefixPath($path) {
+			$sql = 
+			"
+				SELECT			A.*, CONCAT(B.forename, ' ', B.surname) AS OwnerName
+                FROM			".DB_TBL_PREFIX."doc_folders A
+                INNER JOIN      ".DB_TBL_PREFIX."users B ON A.ownerId = B.userID
+                WHERE			A.isDeleted=0 AND A.folderPath LIKE '".$path."%'
+            ";
+            
+			$stmt = $this->DB->rawQuery($sql);
+			if(count($stmt) > 0) {
+				return $stmt;
+			} else {
+				return false;
+			}
+		}
+
         function getByPath($path)
 		{
 			$sql = 

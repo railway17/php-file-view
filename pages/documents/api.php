@@ -160,13 +160,26 @@
 
         $folder = $oFolder->getOne($data['folderId']);
         $renamed = renameFolder($folder['folderPath'], $data['folderName']);
+        
         if($renamed) {
             $updateFolder = array (
                 'folderName'=>$data['folderName'],
                 'folderPath'=>$renamed,
                 'updatedAt'=>date('Y-m-d H:i:s')
             );
-            $docs = $oDocument->getAll("AND D.folderId=".$folder['folderId']);
+            $res = $oFolder->update($updateFolder, $folder['folderId']);
+            $subFolders = $oFolder->getByPrefixPath($folder['folderPath']);
+            foreach($subFolders as $f) {
+                $oldPath = $f['folderPath'];
+                $suffix = substr($oldPath, strlen($folder['folderPath']), strlen($oldPath) - 1);
+                $updateArray = array(
+                    'folderPath'=> $renamed.$suffix
+                );
+                $oFolder->update($updateArray, $f['folderId']);
+            }
+
+            $extraSql = "AND D.docFilePath LIKE '".DIR_ROOT.DOCUMENTS_ROOT.$folder['folderPath']."%'";
+            $docs = $oDocument->getAll($extraSql);
             foreach($docs as $doc) {
                 $lastIndex = strrpos($doc['docFilePath'], '/');
                 $realFile = substr($doc['docFilePath'], $lastIndex + 1, strlen($doc['docFilePath']) - 1);
@@ -176,7 +189,6 @@
                 );
                 $oDocument->update($updateArray, $doc['documentID']);
             }
-            $res = $oFolder->update($updateFolder, $folder['folderId']);
             if($res) {
                 echo $folder['folderId'];
                 return;
