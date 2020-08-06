@@ -25,7 +25,7 @@
     $ext = end((explode(".", $curDoc['docFileName'])));
     $root = DIR_ROOT.DOCUMENTS_ROOT;
     $realPath = substr($curDoc['docFilePath'], strlen($root));
-    
+
     $data['curDoc'] = $curDoc;
     $data['curDocId'] = $curDocId;
     $data['realPath'] = SITE_URL.DOCUMENTS_ROOT.$realPath;

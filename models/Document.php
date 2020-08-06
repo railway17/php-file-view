@@ -61,15 +61,13 @@
 
 			$sql =
 			"
-				SELECT			D.*, F.folderPath, F.folderName, CONCAT(U.forename, ' ', U.surname) AS OwnerName, AC.accessMode
+				SELECT			D.*, F.folderPath, F.folderName, CONCAT(U.forename, ' ', U.surname) AS OwnerName
 				FROM			".DB_TBL_PREFIX."documents AS D
 				INNER JOIN		".DB_TBL_PREFIX."doc_folders AS F ON D.folderId = F.folderId
 				INNER JOIN		".DB_TBL_PREFIX."users AS U ON U.userID=D.ownerId
-				LEFT JOIN		".DB_TBL_PREFIX."folder_access_info AS AC ON AC.docId=D.documentId
 				
 				WHERE			1=1
 				AND				D.documentID = ".$documentID."
-				AND				AC.isFolder=0
 				AND				D.isDeleted = 0 
 			";
 			
