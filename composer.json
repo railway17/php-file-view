@@ -1,0 +1,12 @@
+{
+	"config": {
+        "vendor-dir": "public/php/"
+    },
+    "require": {
+        "what3words/w3w-php-wrapper": "3.*",
+       	"phpoffice/phpword": "v0.14.*",
+		"docparser/docparser-php": "1.*",
+		"phpmailer/phpmailer": "~6.0",
+		"textmagic/sdk": "dev-master"
+    }
+}
